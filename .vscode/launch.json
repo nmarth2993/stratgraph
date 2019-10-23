@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - PlayerEvalWindow",
+            "request": "launch",
+            "mainClass": "PlayerEvalWindow",
+            "projectName": "BattleshipGUI"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - BattleshipGUI",
+            "request": "launch",
+            "mainClass": "BattleshipGUI",
+            "projectName": "BattleshipGUI"
+        }
+    ]
+}

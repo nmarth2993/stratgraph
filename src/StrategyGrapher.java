@@ -6,6 +6,7 @@ import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 
 class StrategyGrapher {
+  final static int diameter = 10;
     JFrame frame;
     StrategyGrapherPanel panel;
 
@@ -17,7 +18,6 @@ class StrategyGrapher {
         gameData = new int[100];
 
         for (int i = 0; i < gameData.length; i++) {
-            gameData[i]++;
             if (i > 20) {
                 gameData[i]++;
             }
@@ -26,6 +26,9 @@ class StrategyGrapher {
             }
             if (i > 90) {
                 gameData[i] += 10;
+            }
+            if (i == 96) {
+              gameData[i] = 100;
             }
         }
         frame = new JFrame();
@@ -75,13 +78,8 @@ class StrategyGrapher {
             for (int i = 0; i <= row; i++) {
                 g2d.drawLine(40, i * height + 40, getWidth(), i * height + 40);
             }
-            int gameCount = 0;
             for (int i = 0; i < gameData.length; i++) {
-                gameCount += gameData[i];
-            }
-            for (int i = 0; i < gameData.length; i++) {
-                float percent = gameData[i] / gameCount;
-                g2d.fillOval(40 + i * width, (int) (40 + (percent * height * 100)), 5, 5);
+                g2d.fillOval(40 - diameter / 2 + i * width,(getHeight() - 40) - diameter / 2 - gameData[i] * (getHeight() - 80), diameter, diameter);
             }
         }
     }

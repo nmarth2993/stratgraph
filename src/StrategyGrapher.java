@@ -6,7 +6,7 @@ import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 
 class StrategyGrapher {
-  final static int diameter = 10;
+  final static int diameter = 5;
     JFrame frame;
     StrategyGrapherPanel panel;
 
@@ -16,21 +16,10 @@ class StrategyGrapher {
 
     public StrategyGrapher() {
         gameData = new int[100];
-
-        for (int i = 0; i < gameData.length; i++) {
-            if (i > 20) {
-                gameData[i]++;
-            }
-            if (i > 50) {
-                gameData[i] += 2;
-            }
-            if (i > 90) {
-                gameData[i] += 10;
-            }
-            if (i == 96) {
-              gameData[i] = 100;
-            }
-        }
+        // gameData[0] = 1;
+        // for (int i = 0; i < gameData.length; i++) {
+        //   gameData[i] = i;
+        // }
         frame = new JFrame();
         panel = new StrategyGrapherPanel();
 
@@ -44,7 +33,7 @@ class StrategyGrapher {
 
     public void startGameThread() {
         new Thread(() -> {
-            for (int i = 0; i < 100; i++) {
+            for (;;/*int i = 0; i < 1000; i++*/) {
                 game = new BattleshipGame(new NicholasMarthinussStrategy());
                 int turns = game.play();
                 gameData[--turns]++;
@@ -79,7 +68,7 @@ class StrategyGrapher {
                 g2d.drawLine(40, i * height + 40, getWidth(), i * height + 40);
             }
             for (int i = 0; i < gameData.length; i++) {
-                g2d.fillOval(40 - diameter / 2 + i * width,(getHeight() - 40) - diameter / 2 - gameData[i] * (getHeight() - 80), diameter, diameter);
+                g2d.fillOval(40 - diameter / 2 + i * diameter,(getHeight() - 40) - diameter / 2 - gameData[i] * 5 /* * (getHeight() - 80)*/, diameter, diameter);
             }
         }
     }
@@ -87,10 +76,7 @@ class StrategyGrapher {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             StrategyGrapher s = new StrategyGrapher();
-            // s.startGameThread();
-            // for (int i = 0; i < s.getGameData().length; i++) {
-            // System.out.println(s.getGameData()[i]);
-            // }
+            s.startGameThread();
         });
     }
 }

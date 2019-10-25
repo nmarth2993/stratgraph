@@ -6,7 +6,7 @@ import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 
 class StrategyGrapher {
-  final static int diameter = 5;
+    final static int diameter = 5;
     JFrame frame;
     StrategyGrapherPanel panel;
 
@@ -18,7 +18,7 @@ class StrategyGrapher {
         gameData = new int[100];
         // gameData[0] = 1;
         // for (int i = 0; i < gameData.length; i++) {
-        //   gameData[i] = i;
+        // gameData[i] = i;
         // }
         frame = new JFrame();
         panel = new StrategyGrapherPanel();
@@ -33,7 +33,7 @@ class StrategyGrapher {
 
     public void startGameThread() {
         new Thread(() -> {
-            for (;;/*int i = 0; i < 1000; i++*/) {
+            for (;;/* int i = 0; i < 1000; i++ */) {
                 game = new BattleshipGame(new NicholasMarthinussStrategy());
                 int turns = game.play();
                 gameData[--turns]++;
@@ -61,14 +61,20 @@ class StrategyGrapher {
             int row = 10;
             int width = (getWidth() - 40) / col;
             int height = (getHeight() - 80) / row;
+            g2d.setFont(new Font("Arial", Font.PLAIN, 8));
+            FontMetrics fm = g2d.getFontMetrics();
             for (int i = 0; i < col; i++) {
                 g2d.drawLine(i * width + 40, 40, i * width + 40, getHeight() - 40);
+                g2d.drawString("" + (10 * i), i * width + 40 - 5 - fm.stringWidth((10 * i) + ""), 40);
             }
             for (int i = 0; i <= row; i++) {
                 g2d.drawLine(40, i * height + 40, getWidth(), i * height + 40);
+                g2d.drawString("" + (10 * i), i * width + 40 - 5 - fm.stringWidth((10 * i) + ""), 40);
             }
             for (int i = 0; i < gameData.length; i++) {
-                g2d.fillOval(40 - diameter / 2 + i * diameter,(getHeight() - 40) - diameter / 2 - gameData[i] * 5 /* * (getHeight() - 80)*/, diameter, diameter);
+                g2d.fillOval(40 - diameter / 2 + i * diameter,
+                        (getHeight() - 40) - diameter / 2 - (int) (((float) gameData[i] / 100f) * (getHeight() - 80)),
+                        diameter, diameter);
             }
         }
     }

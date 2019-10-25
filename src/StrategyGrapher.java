@@ -17,8 +17,12 @@ class StrategyGrapher {
     BattleshipGame game;
 
     int[] gameData;
+    int numGames;
+    int numDots;
 
     public StrategyGrapher() {
+        numDots = 0;
+        numGames = 0;
         gameData = new int[100];
         // gameData[0] = 1;
         // for (int i = 0; i < gameData.length; i++) {
@@ -41,6 +45,7 @@ class StrategyGrapher {
                 for (;;/* int i = 0; i < 1000; i++ */) {
                     game = new BattleshipGame(new NicholasMarthinussStrategy());
                     int turns = game.play();
+                    numGames++;
                     synchronized (gameData) {
                         gameData[--turns]++;
                     }
@@ -96,35 +101,35 @@ class StrategyGrapher {
             for (int i = 0; i < gameData.length; i++) {
                 if (i == 17) {
                     g2d.setColor(Color.RED);
-                    g2d.drawLine(40 + i * diameter, 40, 40 + i * diameter, getHeight() - 40);
+                    g2d.drawLine(40 + (i - 1) * diameter, 40, 40 + (i - 1) * diameter, getHeight() - 40);
                     g2d.drawString("perfect game line", 40 + i * diameter, 30);
                     g2d.setColor(Color.BLACK);
                 }
                 g2d.fillOval(40 - diameter / 2 + i * diameter,
-                        (getHeight() - 40) - diameter / 2 - (int) (((float) gameData[i] / 100f) * (getHeight() - 80)),
+                        2 * (getHeight() - 40) - diameter / 2 - (int) (((float) gameData[i] / numGames) * (getHeight() - 80)),
                         diameter, diameter);
             }
-            g2d.setColor(Color.RED);
-            // g2d.fillRect(width, height, 10, 10);
-            // g2d.drawLine(40 + 2 * width - 4, 40, 40 + 2 * width - 4, getHeight() - 40);
-            // g2d.drawLine(40 + 17 * width, 40, 40 + 17 * width, getHeight() - 40);
+            g2d.setFont(new Font("Arial", Font.BOLD, 20));
+            String dots = "";
+            for (int i = 0; i < numDots; i++) {
+                dots += ".";
+            }
+            g2d.drawString(dots, getWidth() - 80, 20);
         }
     }
 
-    public void stepAnimation() {
-        System.out.println("INCLUDE ANIMATION HERE!");
-    }
-
-    public void repaintThread() {
+    public void animationThread() {
         new Thread(() -> {
             for (;;) {
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                for (numDots = 0; numDots < 6; numDots++) {
+                    try {
+                        Thread.sleep(800);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    panel.repaint();
+
                 }
-                panel.repaint();
-                stepAnimation();
             }
         }).start();
     }
@@ -133,6 +138,7 @@ class StrategyGrapher {
         SwingUtilities.invokeLater(() -> {
             StrategyGrapher s = new StrategyGrapher();
             s.startGameThread();
+            s.animationThread();
         });
     }
 }

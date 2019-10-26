@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,9 +21,13 @@ class StrategyGrapher {
     int numGames;
     int numDots;
 
+    int loadingPos;
+    int loadingPos2;
+
     public StrategyGrapher() {
         numDots = 0;
         numGames = 0;
+        loadingPos = loadingPos2 = 0;
         gameData = new int[100];
         // gameData[0] = 1;
         // for (int i = 0; i < gameData.length; i++) {
@@ -47,7 +52,7 @@ class StrategyGrapher {
                     int turns = game.play();
                     numGames++;
                     synchronized (gameData) {
-                        gameData[--turns]++;
+                        gameData[--turns] += 4;
                     }
                     panel.repaint();
                     try {
@@ -81,7 +86,7 @@ class StrategyGrapher {
             rot.rotate(Math.toRadians(270));
             Font rotatedFont = new Font("Arial", Font.BOLD, 16).deriveFont(rot);
             g2d.setFont(rotatedFont);
-            String vLabel = "% of games";
+            String vLabel = "% of games ||**";
             g2d.drawString(vLabel, 20, getHeight() / 2);
             g2d.setFont(new Font("Arial", Font.BOLD, 14));
             g2d.drawString("Number of turns", getWidth() / 2 - g2d.getFontMetrics().stringWidth("Number of turns") / 2,
@@ -105,30 +110,53 @@ class StrategyGrapher {
                     g2d.drawString("perfect game line", 40 + i * diameter, 30);
                     g2d.setColor(Color.BLACK);
                 }
-                g2d.fillOval(40 - diameter / 2 + i * diameter,
-                        2 * (getHeight() - 40) - diameter / 2 - (int) (((float) gameData[i] / numGames) * (getHeight() - 80)),
-                        diameter, diameter);
+                g2d.fillOval(40 - diameter / 2 + i * diameter, (getHeight() - 40) - diameter / 2
+                        - (int) (((float) gameData[i] / numGames) * (getHeight() - 80)), diameter, diameter);
             }
-            g2d.setFont(new Font("Arial", Font.BOLD, 20));
-            String dots = "";
-            for (int i = 0; i < numDots; i++) {
-                dots += ".";
-            }
-            g2d.drawString(dots, getWidth() - 80, 20);
+            // g2d.setFont(new Font("Arial", Font.BOLD, 20));
+            // String dots = "";
+            // for (int i = 0; i < numDots; i++) {
+            // dots += ".";
+            // }
+            // g2d.drawString(dots, getWidth() - 80, 20);
+
+            g2d.setColor(new Color(66, 135, 245));
+            g2d.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2d.drawLine(getWidth() / 2 + loadingPos, 20, getWidth() / 2 + loadingPos2, 20);
         }
     }
 
     public void animationThread() {
         new Thread(() -> {
             for (;;) {
-                for (numDots = 0; numDots < 6; numDots++) {
+                int iter = 15;
+                int timeout = 100;
+                for (int i = 0; i < iter; i++) {
                     try {
-                        Thread.sleep(800);
+                        Thread.sleep(timeout);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     panel.repaint();
-
+                    loadingPos += 2;
+                }
+                for (int i = 0; i < iter * 2; i++) {
+                    try {
+                        Thread.sleep(timeout);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    panel.repaint();
+                    loadingPos -= 2;
+                }
+                for (int i = 0; i < iter; i++) {
+                    try {
+                        Thread.sleep(timeout);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    panel.repaint();
+                    loadingPos += 2;
                 }
             }
         }).start();
